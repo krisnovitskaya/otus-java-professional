@@ -14,6 +14,10 @@ allprojects {
     apply plugin: "io.spring.dependency-management"
     dependencyManagement {
         dependencies {
+            imports {
+                mavenBom "org.springframework.boot:spring-boot-dependencies:2.7.2"
+                mavenBom "org.testcontainers:testcontainers-bom:1.17.3"
+            }
             dependency "com.google.guava:guava:${Versions.guava}"
         }
     }
