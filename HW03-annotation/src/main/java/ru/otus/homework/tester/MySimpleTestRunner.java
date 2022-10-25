@@ -9,19 +9,21 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MySimpleTestRunner {
 
-    public void run(Class classToTest) throws ReflectiveOperationException {
+    public void run(Class<?> classToTest) throws ReflectiveOperationException {
         Set<MethodGroup> methodGroupSet = analise(classToTest);
         int countDone = 0;
         int countFailed = 0;
         for (MethodGroup methodGroup : methodGroupSet) {
-            if (startTest(methodGroup)) countDone++;
-            else countFailed++;
+            if (startTest(methodGroup)) {
+                countDone++;
+            } else {
+                countFailed++;
+            }
         }
 
         printResult(methodGroupSet.size(), classToTest.getName(), countDone, countFailed);
@@ -38,76 +40,48 @@ public class MySimpleTestRunner {
 
     private boolean startTest(MethodGroup methodGroup) throws ReflectiveOperationException {
         boolean flag = true;
-        Object instance = methodGroup.getConstructor().newInstance();
-        if (Objects.nonNull(methodGroup.getBefore())) {
+        Object instance = methodGroup.constructor().newInstance();
+
+        for (Method before : methodGroup.before()) {
             try {
-                methodGroup.getBefore().setAccessible(true);
-                methodGroup.getBefore().invoke(instance);
-            } catch (Throwable throwable) {
+                before.invoke(instance);
+            } catch (Exception e) {
                 flag = false;
-                throwable.printStackTrace();
+                e.printStackTrace();
             }
         }
 
         if (flag) {
             try {
-                methodGroup.getTest().setAccessible(true);
-                methodGroup.getTest().invoke(instance);
-            } catch (Throwable throwable) {
+                methodGroup.test().invoke(instance);
+            } catch (Exception e) {
                 flag = false;
-                throwable.printStackTrace();
+                e.printStackTrace();
             }
         }
 
-        if (Objects.nonNull(methodGroup.getAfter())) {
+        for (Method after : methodGroup.after()) {
             try {
-                methodGroup.getAfter().setAccessible(true);
-                methodGroup.getAfter().invoke(instance);
-            } catch (Throwable throwable) {
+                after.invoke(instance);
+            } catch (Exception e) {
                 flag = false;
-                throwable.printStackTrace();
+                e.printStackTrace();
             }
         }
 
         return flag;
     }
 
-    private Set<MethodGroup> analise(Class classToTest) throws ReflectiveOperationException {
-        Constructor constructor = classToTest.getConstructor();
+    private Set<MethodGroup> analise(Class<?> classToTest) throws ReflectiveOperationException {
+        Constructor<?> constructor = classToTest.getConstructor();
         List<Method> declaredMethods = Arrays.stream(classToTest.getDeclaredMethods()).toList();
-        Method before = declaredMethods.stream().filter(m -> m.isAnnotationPresent(Before.class)).findFirst().orElse(null);
-        Method after = declaredMethods.stream().filter(m -> m.isAnnotationPresent(After.class)).findFirst().orElse(null);
+
+        Set<Method> before = declaredMethods.stream().filter(m -> m.isAnnotationPresent(Before.class)).collect(Collectors.toSet());
+        Set<Method> after = declaredMethods.stream().filter(m -> m.isAnnotationPresent(After.class)).collect(Collectors.toSet());
         return declaredMethods.stream().filter(m -> m.isAnnotationPresent(Test.class)).map(m -> new MethodGroup(constructor, before, m, after)).collect(Collectors.toSet());
     }
 
 
-    private static class MethodGroup {
-        private Constructor constructor;
-        private Method before;
-        private Method test;
-        private Method after;
-
-        public MethodGroup(Constructor constructor, Method before, Method test, Method after) {
-            this.constructor = constructor;
-            this.before = before;
-            this.test = test;
-            this.after = after;
-        }
-
-        public Constructor getConstructor() {
-            return constructor;
-        }
-
-        public Method getBefore() {
-            return before;
-        }
-
-        public Method getTest() {
-            return test;
-        }
-
-        public Method getAfter() {
-            return after;
-        }
+    private record MethodGroup(Constructor<?> constructor, Set<Method> before, Method test, Set<Method> after) {
     }
 }
