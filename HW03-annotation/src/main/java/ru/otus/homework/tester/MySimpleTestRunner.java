@@ -8,25 +8,25 @@ import ru.otus.homework.annotation.Test;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class MySimpleTestRunner {
 
     public void run(Class<?> classToTest) throws ReflectiveOperationException {
-        Set<MethodGroup> methodGroupSet = analise(classToTest);
+        MethodGroup methodGroup = analise(classToTest);
         int countDone = 0;
         int countFailed = 0;
-        for (MethodGroup methodGroup : methodGroupSet) {
-            if (startTest(methodGroup)) {
+        for (Method method : methodGroup.test()) {
+            if (startTest(methodGroup, method)) {
                 countDone++;
             } else {
                 countFailed++;
             }
         }
 
-        printResult(methodGroupSet.size(), classToTest.getName(), countDone, countFailed);
+        printResult(methodGroup.test().size(), classToTest.getName(), countDone, countFailed);
     }
 
     private void printResult(int size, String name, int countDone, int countFailed) {
@@ -38,7 +38,7 @@ public class MySimpleTestRunner {
         System.out.println(result);
     }
 
-    private boolean startTest(MethodGroup methodGroup) throws ReflectiveOperationException {
+    private boolean startTest(MethodGroup methodGroup, Method test) throws ReflectiveOperationException {
         boolean flag = true;
         Object instance = methodGroup.constructor().newInstance();
 
@@ -53,7 +53,7 @@ public class MySimpleTestRunner {
 
         if (flag) {
             try {
-                methodGroup.test().invoke(instance);
+                test.invoke(instance);
             } catch (Exception e) {
                 flag = false;
                 e.printStackTrace();
@@ -72,16 +72,28 @@ public class MySimpleTestRunner {
         return flag;
     }
 
-    private Set<MethodGroup> analise(Class<?> classToTest) throws ReflectiveOperationException {
+    private MethodGroup analise(Class<?> classToTest) throws ReflectiveOperationException {
         Constructor<?> constructor = classToTest.getConstructor();
         List<Method> declaredMethods = Arrays.stream(classToTest.getDeclaredMethods()).toList();
+        Set<Method> before = new HashSet<>();
+        Set<Method> test = new HashSet<>();
+        Set<Method> after = new HashSet<>();
 
-        Set<Method> before = declaredMethods.stream().filter(m -> m.isAnnotationPresent(Before.class)).collect(Collectors.toSet());
-        Set<Method> after = declaredMethods.stream().filter(m -> m.isAnnotationPresent(After.class)).collect(Collectors.toSet());
-        return declaredMethods.stream().filter(m -> m.isAnnotationPresent(Test.class)).map(m -> new MethodGroup(constructor, before, m, after)).collect(Collectors.toSet());
+        for (Method method : declaredMethods) {
+            if (method.isAnnotationPresent(Before.class)) {
+                before.add(method);
+            }
+            if (method.isAnnotationPresent(Test.class)) {
+                test.add(method);
+            }
+            if (method.isAnnotationPresent(After.class)) {
+                after.add(method);
+            }
+        }
+        return new MethodGroup(constructor, before, test, after);
     }
 
 
-    private record MethodGroup(Constructor<?> constructor, Set<Method> before, Method test, Set<Method> after) {
+    private record MethodGroup(Constructor<?> constructor, Set<Method> before, Set<Method> test, Set<Method> after) {
     }
 }
