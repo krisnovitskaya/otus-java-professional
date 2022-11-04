@@ -1,0 +1,29 @@
+Homework part 1 before optimization
+
+-Xms2048m -Xmx2048m: 1. spend msec:8691, sec:8; 2. spend msec:8600, sec:8; 3.spend msec:8606, sec:8 4. spend msec:8541, sec:8 5. spend msec:8639, sec:8 6. spend msec:8584, sec:8
+-Xms256m -Xmx256m: 1. spend msec:13067, sec:13; 2.fail 3.fail
+-Xms512m -Xmx512m: 1. spend msec:9827, sec:9; 2. spend msec:9644, sec:9; 3.spend msec:9707, sec:9
+-Xms1024m -Xmx1024m: 1. spend msec:8867, sec:8; 2. spend msec:8812, sec:8; 3.spend msec:8896, sec:8
+-Xms3072m -Xmx3072m: 1. spend msec:8635, sec:8; 2. spend msec:8646, sec:8; 3.spend msec:8605, sec:8 4.spend msec:8594, sec:8 5. spend msec:8607, sec:8 6. spend msec:8594, sec:8
+-Xms1280m -Xmx1280m: 1. spend msec:8760, sec:8; 2. spend msec:8733, sec:8; 3.spend msec:8746, sec:8
+-Xms1536m -Xmx1536m: 1. spend msec:8771, sec:8; 2. spend msec:8704, sec:8; 3.spend msec:8738, sec:8
+-Xms4096m -Xmx4096m: 1. spend msec:8612, sec:8; 2. spend msec:8603, sec:8; 3.spend msec:8594, sec:8 4.spend msec:8600, sec:8 5.spend msec:8589, sec:8 6.spend msec:8963, sec:8
+-Xms5120m -Xmx5120m: 1. spend msec:8642, sec:8; 2. spend msec:8581, sec:8; 3.spend msec:8585, sec:8
+
+
+с учетом разброса в мс оптимальным будет -Xms2048m -Xmx2048m
+влияния типа сборщика: -XX:-UseParallelGC / -XX:-UseSerialGC / -XX:+UseG1GC на результаты не обнаружила
+
+----------------------------
+Homework part 2 after optimization
+
+2048: 1.spend msec:1733, 2.sec:1; 2.spend msec:1724, sec:1; 3.spend msec:1732, sec:1
+256: spend msec:2149, sec:2
+512: 1.spend msec:1752, sec:1; 2.spend msec:1748, sec:1; 3.spend msec:1759, sec:1; 4.spend msec:1684, sec:1
+1024:  1.spend msec:1700, sec:1; 2.spend msec:1702, sec:1; 3.spend msec:1693, sec:1; 4.spend msec:1706, sec:1; 5.spend msec:1754, sec:1 6.spend msec:1656, sec:1; 7.spend msec:1646, sec:1; 8.spend msec:1760, sec:1
+
+768 1.spend msec:1670, sec:1; 2.spend msec:1691, sec:1; 3.spend msec:1679, sec:1 4.spend msec:1676, sec:1 5.spend msec:1701, sec:1 6. spend msec:1707, sec:1; 7.spend msec:1685, sec:1 8.spend msec:1674, sec:1
+
+После оптимизации: замена Integer -> int
+сразу произошел прирост по скорости на -Xms2048m -Xmx2048m
+с учетом разброса в мс оптимальным теперь становится -Xms768m -Xmx768m
