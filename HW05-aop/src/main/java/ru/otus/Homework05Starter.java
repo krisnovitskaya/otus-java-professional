@@ -31,9 +31,16 @@ public class Homework05Starter {
     public static void main(String... args) throws Exception {
         var testLogging = ProxyCreator.createProxyClass(TestLoggingImpl.class);
 
+        System.out.println("_______");
         testLogging.calculation(3);
+        System.out.println("_______");
+
         testLogging.calculation(2,10);
+        System.out.println("_______");
+
         testLogging.calculation();
+
+        System.out.println("_______");
         testLogging.calculation(3, 7, "test");
     }
 }

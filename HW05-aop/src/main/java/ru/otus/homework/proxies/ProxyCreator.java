@@ -27,7 +27,7 @@ public class ProxyCreator {
             Method[] declaredMethods = clazz.getDeclaredMethods();
             for (Method declaredMethod : declaredMethods) {
                 if(declaredMethod.isAnnotationPresent(Log.class)){
-                    loggingMethods.add(new MethodInfo(declaredMethod.getName(), Arrays.stream(declaredMethod.getParameterTypes()).toList()));
+                    loggingMethods.add(new MethodInfo(declaredMethod.getName(), declaredMethod.getParameterTypes()));
                 }
             }
         }
@@ -35,7 +35,7 @@ public class ProxyCreator {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
 
-            MethodInfo methodInfo = new MethodInfo(method.getName(), Arrays.stream(method.getParameterTypes()).toList());
+            MethodInfo methodInfo = new MethodInfo(method.getName(), method.getParameterTypes());
             if(loggingMethods.contains(methodInfo)){
                 logging(methodInfo, args);
             }
@@ -55,5 +55,20 @@ public class ProxyCreator {
         }
     }
 
-    record MethodInfo(String name, List<Class<?>> parameters){}
+    record MethodInfo(String name, Class<?>[] parameters){
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            MethodInfo that = (MethodInfo) o;
+            return Objects.equals(name, that.name) && Arrays.equals(parameters, that.parameters);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = Objects.hash(name);
+            result = 31 * result + Arrays.hashCode(parameters);
+            return result;
+        }
+    }
 }
