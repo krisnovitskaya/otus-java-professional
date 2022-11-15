@@ -33,7 +33,7 @@ public class Storage {
     }
 
     public Collection<Banknote> issue(int sum){
-        if(balance < sum) throw new BanknoteException("В банкомате отсутствует запрошенная сумма: " + sum);
+        checkSum(sum);
         return getFromStorage(countBanknoteToIssue(sum));
     }
 
