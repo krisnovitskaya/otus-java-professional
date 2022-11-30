@@ -5,3 +5,5 @@ include 'HW03-annotation'
 include 'L08-gc:homework'
 include 'HW05-aop'
 include 'HW06-ATM'
+
+include 'L15-structuralPatterns:homework'
