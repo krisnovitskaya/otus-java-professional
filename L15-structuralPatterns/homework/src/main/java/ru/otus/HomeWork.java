@@ -1,13 +1,8 @@
 package ru.otus;
 
-import org.w3c.dom.ls.LSOutput;
 import ru.otus.handler.ComplexProcessor;
-import ru.otus.listener.ListenerPrinterConsole;
 import ru.otus.listener.homework.HistoryListener;
 import ru.otus.model.Message;
-import ru.otus.processor.LoggerProcessor;
-import ru.otus.processor.ProcessorConcatFields;
-import ru.otus.processor.ProcessorUpperField10;
 import ru.otus.processor.homework.ProcessorEvenSecondCheck;
 import ru.otus.processor.homework.ProcessorForSwapFields;
 
