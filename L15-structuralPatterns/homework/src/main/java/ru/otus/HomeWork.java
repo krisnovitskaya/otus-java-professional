@@ -1,5 +1,19 @@
 package ru.otus;
 
+import org.w3c.dom.ls.LSOutput;
+import ru.otus.handler.ComplexProcessor;
+import ru.otus.listener.ListenerPrinterConsole;
+import ru.otus.listener.homework.HistoryListener;
+import ru.otus.model.Message;
+import ru.otus.processor.LoggerProcessor;
+import ru.otus.processor.ProcessorConcatFields;
+import ru.otus.processor.ProcessorUpperField10;
+import ru.otus.processor.homework.ProcessorEvenSecondCheck;
+import ru.otus.processor.homework.ProcessorForSwapFields;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
 public class HomeWork {
 
     /*
@@ -20,5 +34,26 @@ public class HomeWork {
            по аналогии с Demo.class
            из элеменов "to do" создать new ComplexProcessor и обработать сообщение
          */
+
+        var processors = List.of(new ProcessorForSwapFields(),
+                new ProcessorEvenSecondCheck(LocalDateTime::now));
+
+        var complexProcessor = new ComplexProcessor(processors, ex -> {
+            System.out.println(ex.getMessage());
+        });
+        var historyListener = new HistoryListener();
+        complexProcessor.addListener(historyListener);
+
+        var message = new Message.Builder(1L)
+                .field1("field1")
+                .field2("field2")
+                .field11("field11")
+                .field12("field12")
+                .build();
+
+        var result = complexProcessor.handle(message);
+        System.out.println("result:" + result);
+
+        complexProcessor.removeListener(historyListener);
     }
 }
