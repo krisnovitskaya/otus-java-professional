@@ -6,7 +6,10 @@ import org.junit.jupiter.api.Test;
 import ru.otus.model.Message;
 import ru.otus.listener.Listener;
 import ru.otus.processor.Processor;
+import ru.otus.processor.homework.EvenSecondException;
+import ru.otus.processor.homework.ProcessorEvenSecondCheck;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +74,26 @@ class ComplexProcessorTest {
         //then
         verify(processor1, times(1)).process(message);
         verify(processor2, never()).process(message);
+    }
+
+    @Test
+    @DisplayName("Тестируем проверку четных секунд")
+    void handleEvenCheckProcessorTest() {
+        //given
+        var message = new Message.Builder(1L).build();
+        LocalDateTime time = LocalDateTime.of(2000, 5, 10, 2, 2, 2);
+
+        Processor processor = new ProcessorEvenSecondCheck(() -> time);
+        var complexProcessor = new ComplexProcessor(List.of(processor), (ex) -> {
+            if(ex instanceof EvenSecondException) {
+                throw new EvenSecondException(ex.getMessage());
+            }else {
+                throw new TestException(ex.getMessage());
+            }
+        });
+
+        assertThatExceptionOfType(EvenSecondException.class).isThrownBy(() -> complexProcessor.handle(message));
+
     }
 
     @Test
