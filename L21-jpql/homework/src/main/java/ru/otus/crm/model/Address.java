@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString
-//@AllArgsConstructor
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -20,9 +19,6 @@ public class Address {
     @Column(name = "street")
     private String street;
 
-//    @OneToOne(mappedBy = "address")
-//    @JoinColumn(name = "client_id")
-//    private Client client;
 
     public Address(Long id, String street) {
         this.id = id;
