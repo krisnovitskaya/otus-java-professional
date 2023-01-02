@@ -12,3 +12,6 @@ include 'L18-jdbc:demo'
 include 'L18-jdbc:homework'
 
 include 'L21-jpql:homework'
+
+include 'HW11-cache-engine:demo'
+include 'HW11-cache-engine:homework'
