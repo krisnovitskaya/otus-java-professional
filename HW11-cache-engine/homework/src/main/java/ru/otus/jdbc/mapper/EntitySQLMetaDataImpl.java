@@ -15,13 +15,13 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData{
         var allFieldsName = entityClassMetaData.getAllFields().stream().map(Field::getName).collect(Collectors.joining(", "));
         var allFieldsNameWithoutId = entityClassMetaData.getFieldsWithoutId().stream().map(Field::getName).collect(Collectors.joining(", "));
         var signs = entityClassMetaData.getFieldsWithoutId().stream().map(field -> "?").collect(Collectors.joining(", "));
-        var setFields = entityClassMetaData.getFieldsWithoutId().stream().map(field -> "set " + field.getName() + " = ?").collect(Collectors.joining(", "));
+        var setFields = entityClassMetaData.getFieldsWithoutId().stream().map(field -> field.getName() + " = ?").collect(Collectors.joining(", "));
 
 
         this.selectAllSql = String.format("select %s from %s", allFieldsName, tableName);
         this.selectByIdSql = String.format("select %s from %s where %s  = ?", allFieldsName, tableName, entityClassMetaData.getIdField().getName());
         this.insertSql = String.format("insert into %s(%s) values (%s)", tableName, allFieldsNameWithoutId, signs);
-        this.updateSql = String.format("update %s %s where %s = ?", tableName, setFields, entityClassMetaData.getIdField().getName());
+        this.updateSql = String.format("update %s set %s where %s = ?", tableName, setFields, entityClassMetaData.getIdField().getName());
     }
 
     @Override
