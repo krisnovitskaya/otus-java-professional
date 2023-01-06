@@ -15,3 +15,5 @@ include 'L21-jpql:homework'
 
 include 'HW11-cache-engine:homework'
 include 'HW12-web-server:homework'
+
+include 'L26-di:homework'
