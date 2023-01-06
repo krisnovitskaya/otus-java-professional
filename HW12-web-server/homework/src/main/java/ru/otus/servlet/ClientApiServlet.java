@@ -44,7 +44,7 @@ public class ClientApiServlet extends HttpServlet {
 
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Client newClient = convertToNewClient(request.getParameter("name"), request.getParameter("address"), request.getParameter("phones"));
         dbServiceClient.saveClient(newClient);
         response.setStatus(SC_CREATED);
