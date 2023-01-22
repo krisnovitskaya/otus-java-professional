@@ -3,4 +3,6 @@ public interface Versions {
     String glassfishJson = "2.0.1";
     String gson = "2.7";
     String reflections = "0.10.2";
+    String jetty = "11.0.7";
+    String freemarker = "2.3.31";
 }
