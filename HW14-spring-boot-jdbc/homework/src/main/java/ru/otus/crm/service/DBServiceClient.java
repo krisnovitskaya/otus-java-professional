@@ -1,7 +1,6 @@
 package ru.otus.crm.service;
 
 import ru.otus.crm.model.Client;
-import ru.otus.dtos.ClientDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,5 +13,5 @@ public interface DBServiceClient {
 
     List<Client> findAll();
 
-    List<ClientDto> findAllDto();
+    void deleteById(Long id);
 }

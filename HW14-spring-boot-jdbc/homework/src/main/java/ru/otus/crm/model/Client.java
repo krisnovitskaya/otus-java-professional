@@ -1,68 +1,40 @@
 package ru.otus.crm.model;
 
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.data.relational.core.mapping.MappedCollection;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@Entity
 @Table(name = "client")
-public class Client implements Cloneable {
+@ToString
+@Builder(toBuilder = true)
+public class Client {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id")
-    private Long id;
+    private final Long id;
 
-    @Column(name = "name")
-    private String name;
+    private final String name;
 
-    @OneToOne(cascade = {CascadeType.ALL})
+    @MappedCollection(idColumn = "client_id")
     private Address address;
 
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "client")
-    private List<Phone> phones;
+    @MappedCollection(idColumn = "client_id")
+    private Set<Phone> phones;
 
-    public Client(String name) {
-        this.id = null;
-        this.name = name;
-    }
-
-    public Client(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public Client(Long id, String name, Address address, List<Phone> phones) {
+    @PersistenceCreator
+    public Client(Long id, String name, Address address, Set<Phone> phones) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.phones = phones;
-        for (Phone phone : this.phones) {
-            phone.setClient(this);
-        }
-    }
-
-    @Override
-    public Client clone() {
-        Client cloneClient = new Client(this.id, this.name);
-
-        cloneClient.setAddress(new Address(this.getAddress().getId(), this.getAddress().getStreet()));
-        cloneClient.setPhones(this.getPhones().stream().map(old -> new Phone(old.getId(), old.getNumber(), cloneClient)).toList());
-        return cloneClient;
-    }
-
-    @Override
-    public String toString() {
-        return "Client{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
     }
 }
