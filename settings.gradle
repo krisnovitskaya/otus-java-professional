@@ -18,3 +18,5 @@ include 'HW12-web-server:homework'
 include 'HW14-spring-boot-jdbc:homework'
 
 include 'L26-di:homework'
+include 'HW15-number-sequence'
+
