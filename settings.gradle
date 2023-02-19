@@ -20,3 +20,5 @@ include 'HW14-spring-boot-jdbc:homework'
 include 'L26-di:homework'
 
 include 'L32-concurrentCollections:QueueHomework'
+include 'HW17-gRPC'
+
