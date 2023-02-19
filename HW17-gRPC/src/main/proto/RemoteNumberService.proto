@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ru.otus.protobuf.generated;
+
+option java_multiple_files = true;
+
+message NumberRequest {
+    int64 numberFrom = 1;
+    int64 numberTo = 2;
+}
+
+message NumberResponse{
+    int64 value = 1;
+}
+
+service RemoteNumberService {
+    rpc generateNumbers(NumberRequest) returns (stream NumberResponse);
+}
