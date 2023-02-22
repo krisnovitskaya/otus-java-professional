@@ -1,29 +1,9 @@
 package ru.otus.crm.model;
 
-import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.lang.NonNull;
 
-import javax.persistence.*;
-
-@Entity
 @Table(name = "phone")
-@NoArgsConstructor
-@Getter
-@Setter
-@ToString
-@AllArgsConstructor
-public class Phone {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id")
-    private Long id;
-    @Column(name = "number")
-    private String number;
-
-    @ManyToOne
-    @JoinColumn(name = "client_id")
-    private Client client;
-    public Phone(Long id, String number) {
-        this.id = id;
-        this.number = number;
-    }
+public record Phone(@Id Long id, @NonNull String number, @NonNull Long clientId) {
 }

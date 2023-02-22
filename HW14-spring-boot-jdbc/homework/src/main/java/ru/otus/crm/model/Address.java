@@ -1,27 +1,9 @@
 package ru.otus.crm.model;
 
-import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.lang.NonNull;
 
-import javax.persistence.*;
-
-@Entity
 @Table(name = "address")
-@NoArgsConstructor
-@Getter
-@Setter
-@ToString
-public class Address {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id")
-    private Long id;
-
-    @Column(name = "street")
-    private String street;
-
-
-    public Address(Long id, String street) {
-        this.id = id;
-        this.street = street;
-    }
+public record Address(@Id Long id, @NonNull String street, @NonNull Long clientId) {
 }
