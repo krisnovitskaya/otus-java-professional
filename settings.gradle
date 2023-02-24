@@ -22,3 +22,6 @@ include 'L26-di:homework'
 include 'L32-concurrentCollections:QueueHomework'
 include 'HW17-gRPC'
 
+include 'L38-webflux-chat:client-service'
+include 'L38-webflux-chat:datastore-service'
+
