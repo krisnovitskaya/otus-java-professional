@@ -1,6 +1,6 @@
-docker run --rm --name pg-docker \
--e POSTGRES_PASSWORD=pwd \
--e POSTGRES_USER=usr \
--e POSTGRES_DB=demoDB \
--p 5430:5432 \
-postgres:13
+docker run --rm --name pg-docker -e POSTGRES_PASSWORD=pwd -e POSTGRES_USER=usr -e POSTGRES_DB=demoDB -p 5430:5432 postgres:13
+
+
+docker run -d -p 5430:5432 --name pg-docker -e POSTGRES_PASSWORD=pwd -e POSTGRES_USER=usr -e POSTGRES_DB=demoDB postgres:13
+docker exec -it pg-docker bash
+psql -U usr demoDB
