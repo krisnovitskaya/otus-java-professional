@@ -6,10 +6,11 @@ import ru.otus.api.SensorDataProcessor;
 import ru.otus.api.model.SensorData;
 import ru.otus.lib.SensorDataBufferedWriter;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 // Этот класс нужно реализовать
 public class SensorDataProcessorBuffered implements SensorDataProcessor {
@@ -18,17 +19,17 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
     private final int bufferSize;
     private final SensorDataBufferedWriter writer;
 
-    private final Set<SensorData> dataBuffer;
+    private final BlockingQueue<SensorData> dataBuffer;
 
     public SensorDataProcessorBuffered(int bufferSize, SensorDataBufferedWriter writer) {
         this.bufferSize = bufferSize;
         this.writer = writer;
-        this.dataBuffer = new ConcurrentSkipListSet<>(Comparator.comparing(SensorData::getMeasurementTime));
+        this.dataBuffer = new ArrayBlockingQueue<>(bufferSize);
     }
 
     @Override
     public void process(SensorData data) {
-        dataBuffer.add(data);
+        dataBuffer.offer(data);
         if (dataBuffer.size() >= bufferSize) {
             flush();
         }
@@ -36,12 +37,11 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
 
     public void flush() {
         try {
-            synchronized (dataBuffer) {
-                if (dataBuffer.size() > 0) {
-                    List<SensorData> sensorData = dataBuffer.stream().toList();
-                    writer.writeBufferedData(sensorData);
-                    dataBuffer.removeAll(sensorData);
-                }
+            List<SensorData> sensorData = new ArrayList<>(dataBuffer.size());
+            dataBuffer.drainTo(sensorData);
+            if (sensorData.size() > 0) {
+                sensorData.sort(Comparator.comparing(SensorData::getMeasurementTime));
+                writer.writeBufferedData(sensorData);
             }
         } catch (Exception e) {
             log.error("Ошибка в процессе записи буфера", e);
