@@ -8,16 +8,27 @@ const messageElementId = "message";
 const setConnected = (connected) => {
     const connectBtn = document.getElementById("connect");
     const disconnectBtn = document.getElementById("disconnect");
+    const roomId = document.getElementById(roomIdElementId).value;
+
+    const sendBlock = document.getElementById("send_block");
+
 
     connectBtn.disabled = connected;
     disconnectBtn.disabled = !connected;
     const chatLine = document.getElementById(chatLineElementId);
     chatLine.hidden = !connected;
+    sendBlock.hidden = roomId === '1408';
 }
 
 const connect = () => {
     stompClient = Stomp.over(new SockJS('/gs-guide-websocket'));
     stompClient.connect({}, (frame) => {
+
+        const chatLine = document.getElementById(chatLineElementId);
+        for (const chatLineElement of chatLine.children) {
+            chatLineElement.remove();
+        }
+
         setConnected(true);
 
         const roomId = document.getElementById(roomIdElementId).value;
